@@ -33,12 +33,16 @@ def on_intent(request):
     intent_name = request['intent']['name']
     print("intent name: {}".format(intent_name))
 
-    if intent_name == "getWeather":
+    if intent_name == "getWeatherIntent":
         return return_weather(DEFAULT_CITY)
     elif intent_name == "getWeatherWithCity":
-        print(request["intent"]["slots"]["city"]["value"])
-        if request["intent"]["slots"]["city"]["value"].lower() in CITY_MAP.keys():
-            city_id = CITY_MAP[request["intent"]["slots"]["city"]["value"].lower()]
+        # {u'resolutions': {u'resolutionsPerAuthority': 
+        #[{u'status': {u'code': u'ER_SUCCESS_MATCH'}, u'values': [{u'value': {u'name': u'\u3068\u3046\u304d\u3087\u3046', u'id': u'tokyo'}}], u'authority': u'amzn1.er-authority.echo-sdk.amzn1.ask.skill.3ef24d26-fe77-4392-80ad-317639ec8131.CITY_LIST'}]}, u'name': u'city', u'value': u'\u3068\u3046\u304d\u3087\u3046', u'confirmationStatus': u'NONE'}
+        print json.dumps(request, indent=2)
+        cid = request["intent"]["slots"]["city"]["resolutions"]["resolutionsPerAuthority"][0]["values"][0]["value"]["id"]
+        print(cid)
+        if cid in CITY_MAP.keys():
+            city_id = CITY_MAP[cid]
         else:
             city_id = DEFAULT_CITY # new york
         return return_weather(city_id)
